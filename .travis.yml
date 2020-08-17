@@ -10,3 +10,12 @@ install:
 
 script:
   - pytest
+  
+deploy:
+  provider: pypi
+  username: "bmmauri"
+  password: ""
+  server: https://testpypi.python.org/pypi
+  on:
+    tags: true
+    
