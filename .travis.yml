@@ -14,3 +14,5 @@ deploy:
   server: https://test.pypi.org/legacy/
   on:
     branch: master
+  skip_cleanup: true
+  skip_existing: true
