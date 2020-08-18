@@ -1,16 +1,20 @@
 language: python
 python:
-  - '3.7'
-  - '3.8'
-  - 3.8-dev
-  - nightly
+- '3.7'
+- '3.8'
+- 3.8-dev
+- nightly
+install:
+- python -m pip install --upgrade pip
+- pip --version
 script:
-  - python -c "print('Hello Travis')"
+- python -c "print('Hello Travis')"
 deploy:
   provider: pypi
-  username: __token__
+  user: bmmauri
   password:
-    secure: FmRSASEPalRBNdltMcLd9lEBuMVK6Iv2ZT/JcG4SflGwihnntczhiFzYJWc1wwdPLmbUDUxqNfCce7AvvJWye1NbXiN6B4JX/g7F+DDcnC28a4mk3hQNHZUZ4LRZDJHpxnf6z8gneELva1A4FZ6QZylbS1u73V1J+aJXdkS6APtvqmDxG3IbHt8dBlHDmgZ9JtertVSIZqmdnLF1Nthr68+rnluhLT49rzjhAJBE/GmAJECvlVX+hwJAs6H9qScYbCjW9+u2O/ajclgdJV0GD1V5T6oFUH9+5KtyVgkOmJ9u6zgRJeP2WR3WaUxn0/lQ2plZI+eaiERlNIBv9MknFXmB4xXtnqkb/quUra7ixDoUySUgn3tY5WV4zDb/iF3MXO5P73K2J1UOD2oeOqOD6Y0MKq77rYpdAkbOQuG+6mZDua+6wu02c2GGkcjJZCAd3WMy/xpk2/5Iu3aphv4QJAzq6PNS4QzR8C/N9t6V5T9TliDyLICm7WfgJmF+rpTUMwRQVcV5bwDY5vPLLJqOClEptFPLo35UaJY565JEJ2cLzInwxOQvWBxRzpLJWSIyHzTtLIwAsoZ7vgwUiMwtFrAkLsgy7SUqckIjGYFmXYhl1FpxpIpTJN09ODyk9P6Bx+R809zIvuQqRqyHt5SWsxMD2CLkJfwDqa3uwlHCE/o=
+    secure: weCXEjBEXsdVh9SvsRIC08FYWURcUrGjOei8IosvZ6SewEx45591WSoVMcgW+k+yrDPCgFYCVQ9xGBcnAlUnBd9GG8w+spKhY3SCQbAjnMumFO0J7blXmdRD6BZZZsad32lcMcz5rQEsBp0gBsfASVTWnzM6bJP4Wfsa3Sair/47TsGHN9ev8G5TCkEKA0KkIAAa0ZUKSic630dEbFSvqabfn4taz7mmb13vHfjppM56j7qQEvK4jI3FSbnKnM5LPWeXywhhRBnUrLSJ4v58w0DpAzjralcfOS5MWfrCmVqSpDBHU4NB5Okyhg0mM8A41D65Qisah8caI90kxAJYg3htRaZSxXHHjlS1w535d1+7z+fSks4LjHnX42Q0R3kRY+JRMfPmMXdVY16Ay/ACry3tQrjwBcunQJOZBJ7hGZElWNIph/WZDhWu9Y1SkdAb7zJz4HB/v8f02FHxcduQXg36s63xsCp64KmtYAvPP6FfuBtZ7S2nYZawR8DlWPpGKqF1A09Q95ca5pAdZVv9zry0AhyylxTHHBz/lMH4SHbUS7lU+OiMc56FfdC8NU0BY+pNAgM36r6h5rAEpF9cj5teXtomIwtVJxHf8arseH5h2Nnm3/qtT7UOGmHHZP7lvJcpLP9+yDY9f8Ub2Cf9uuj42LXfOVNrspDCqu0FSi4=
   server: https://test.pypi.org/legacy/
   on:
+    tags: true
     branch: master
