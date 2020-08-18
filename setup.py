@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="test-folder-bmmauri",
-    version="0.0.6",
+    version="0.0.7",
     author="Maurizio Bussi",
     author_email="maurizio.bussi.mb@gmail.com",
     description="Test Automation framework",
