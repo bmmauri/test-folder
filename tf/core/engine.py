@@ -55,6 +55,18 @@ class Machine:
         self._notify()
 
 
+class SocketMachine(Machine):
+
+    def __init__(self):
+        super().__init__()
+
+
+class HttpMachine(Machine):
+
+    def __init__(self):
+        super().__init__()
+
+
 class Observer(metaclass=abc.ABCMeta):
     """
     Observer object
@@ -73,5 +85,6 @@ class Action(Observer):
     """
     Action object
     """
+
     def update(self, arg):
         self._action_state = arg

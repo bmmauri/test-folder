@@ -1,7 +1,7 @@
 import random
 import unittest
 
-from tf.core.engine import Machine, Action, MachineState
+from tf.core.engine import HttpMachine, SocketMachine, Machine, Action, MachineState
 
 
 class EngineTestCase(unittest.TestCase):
@@ -10,9 +10,27 @@ class EngineTestCase(unittest.TestCase):
         Test the number of attachments into the machine.
         """
         machine = Machine()
-        attachments = [machine.attach(Action()) for i in range(random.randint(2,19))]
+        attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
         self.assertEqual(len(machine._actions), len(attachments))
 
+    def test__socket_machine_multiple_actions(self):
+        """
+        Test the number of attachments into the socket machine.
+        """
+        machine = SocketMachine()
+        attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
+        self.assertEqual(len(machine._actions), len(attachments))
+
+    def test__http_machine_multiple_actions(self):
+        """
+        Test the number of attachments into the http machine.
+        """
+        machine = HttpMachine()
+        attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
+        self.assertEqual(len(machine._actions), len(attachments))
+
+
+class EngineMachineTestCase(unittest.TestCase):
     def test__machine_abort(self):
         """
         Test the state of the machine: MachineState.ABORT.
