@@ -1,2 +1,2 @@
-# test-folder [![Build Status](https://travis-ci.org/bmmauri/test-folder.svg?branch=master)](https://travis-ci.org/bmmauri/test-folder)
+# test-folder ![Test](https://github.com/bmmauri/test-folder/workflows/Test/badge.svg?branch=master) 
 Test Automation framework based on Python
