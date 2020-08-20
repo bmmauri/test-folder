@@ -4,6 +4,9 @@ Engine module
 """
 import abc
 import enum
+import socket
+
+from typing import Union
 
 
 class MachineState(enum.Enum):
@@ -18,8 +21,9 @@ class MachineState(enum.Enum):
 class Machine:
 
     def __init__(self):
-        self._actions = set()
-        self._machine_state = None
+        self._collections: set = set()
+        self._actions: set = set()
+        self._machine_state: Union[None, int] = None
 
     def attach(self, action):
         action._machine = self
@@ -55,10 +59,26 @@ class Machine:
         self._notify()
 
 
+class SocketClient(socket.socket):
+
+    def __init__(self, host: str = "localhost", port: int = 8888) -> None:
+        super().__init__()
+        self._ADDRESS = host, port
+
+
+    def call(self, message: Union[None, str] = None):
+        with self as sock:
+            sock.connect(self._ADDRESS)
+            sock.send(bytes(message, encoding='utf-8'))
+            return str(sock.recv(1024), encoding="utf-8")
+
+
 class SocketMachine(Machine):
 
-    def __init__(self):
+    def __init__(self, client: SocketClient):
         super().__init__()
+        self._client = client
+        self._collections.add(self._client)
 
 
 class HttpMachine(Machine):
