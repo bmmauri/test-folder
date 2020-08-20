@@ -30,7 +30,7 @@ class EngineTestCase(unittest.TestCase):
         self.assertEqual(len(machine._actions), len(attachments))
 
 
-class EngineMachineTestCase(unittest.TestCase):
+class EngineMachineStateTestCase(unittest.TestCase):
     def test__machine_abort(self):
         """
         Test the state of the machine: MachineState.ABORT.

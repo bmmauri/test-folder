@@ -65,7 +65,6 @@ class SocketClient(socket.socket):
         super().__init__()
         self._ADDRESS = host, port
 
-
     def call(self, message: Union[None, str] = None):
         with self as sock:
             sock.connect(self._ADDRESS)

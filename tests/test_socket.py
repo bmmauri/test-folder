@@ -1,12 +1,10 @@
 import unittest
-import unittest.mock as mock
 
-from tf.core.engine import SocketMachine, HttpMachine, Action, SocketClient
+from tf.core.engine import SocketMachine, SocketClient
 
 
 class EngineTestCase(unittest.TestCase):
 
-    @unittest.skip
     def test__socket_machine_call(self):
         """
         Test socket call.
@@ -16,7 +14,6 @@ class EngineTestCase(unittest.TestCase):
             "message": "hello python"
         })
         self.assertIsNotNone(response)
-
 
 
 if __name__ == '__main__':
