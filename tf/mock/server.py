@@ -1,7 +1,4 @@
-import socket
 import socketserver
-from typing import Union
-
 import tf
 import threading
 import time
@@ -27,6 +24,7 @@ class MockTCPServer(socketserver.TCPServer):
     _action = None
 
     def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketHandler):
+        self._action = tf.Action()
         super().__init__((host, port), handler, bind_and_activate=False)
 
     def __run(self):
@@ -44,23 +42,3 @@ class MockTCPServer(socketserver.TCPServer):
             self.shutdown()
         else:
             shutdown = threading.Timer(interval=interval, function=self.shutdown).start()
-
-    def set_action(self, action):
-        self._action = action
-
-
-class SocketClient(socket.socket):
-    _action = None
-
-    def __init__(self, host: str = "localhost", port: int = 8888) -> None:
-        super().__init__()
-        self._ADDRESS = host, port
-
-    def call(self, message: Union[None, str] = None):
-        with self as sock:
-            sock.connect(self._ADDRESS)
-            sock.send(bytes(message, encoding='utf-8'))
-            return str(sock.recv(1024), encoding="utf-8")
-
-    def set_action(self, action):
-        self._action = action
