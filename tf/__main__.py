@@ -12,8 +12,7 @@ def mock(args):
 
 
 parser = argparse.ArgumentParser(description='Easy Mock socket server')
-subparsers = parser.add_subparsers()
-mock_parser = subparsers.add_parser('mock', help='Mock client|server')
+mock_parser = parser.add_subparsers().add_parser('mock', help='Mock client|server')
 mock_parser.add_argument('--host', help='Socket hostname', required=True)
 mock_parser.add_argument('--port', help='Socket port', type=int, required=True)
 mock_parser.add_argument('--open-time', help="Listening open time of server", type=int, default=5)
