@@ -35,10 +35,17 @@ class MockTCPServer(socketserver.TCPServer):
             server.server_activate()
             server.serve_forever()
 
+    def __close(self):
+        self._action.get_machine().finish()
+        self.shutdown()
+
     def fork_until(self, interval: int = 5, detach: bool = False):
-        run = threading.Thread(target=self.__run).start()
+        threading.Thread(target=self.__run).start()
+        machine = self._action.get_machine()
+        if machine:
+            machine.run()
         if not detach:
             time.sleep(interval)
-            self.shutdown()
+            self.__close()
         else:
-            shutdown = threading.Timer(interval=interval, function=self.shutdown).start()
+            threading.Timer(interval=interval, function=self.__close).start()
