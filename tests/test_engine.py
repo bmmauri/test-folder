@@ -1,4 +1,3 @@
-import random
 import unittest
 
 from tf import Action
@@ -13,7 +12,7 @@ class EngineTestCase(unittest.TestCase):
         Test the number of attachments into the machine.
         """
         machine = Machine()
-        attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
+        attachments = [machine.attach(Action()) for i in range(5)]
         self.assertEqual(len(machine._actions), len(attachments))
 
     def test__socket_machine_multiple_actions(self):
@@ -24,7 +23,7 @@ class EngineTestCase(unittest.TestCase):
             client=MockTCPClient(port=8888),
             server=MockTCPServer(port=8888)
         )
-        attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
+        attachments = [machine.attach(Action()) for i in range(5)]
         self.assertEqual(len(machine._actions), len(attachments) + len(machine._collections))
 
     def test__socket_machine_state_after_machine_started(self):
@@ -76,7 +75,7 @@ class EngineTestCase(unittest.TestCase):
         Test the number of attachments into the http machine.
         """
         machine = HttpMachine()
-        attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
+        attachments = [machine.attach(Action()) for i in range(5)]
         self.assertEqual(len(machine._actions), len(attachments))
 
 
