@@ -21,7 +21,8 @@ class MachineState(enum.Enum):
 
 class Machine:
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """ Machine base object """
         self._collections: set = set()
         self._actions: set = set()
         self._machine_state: Union[None, int] = None

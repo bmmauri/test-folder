@@ -1,5 +1,4 @@
-"""
-Easy run a simple socket server mock.
+""" Easy run a simple socket server mock.
 
 e.g usage:
     > python -m tf.mock --host localhost --port 8888 --open-time 60

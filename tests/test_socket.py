@@ -8,9 +8,7 @@ from tf.mock.server import MockTCPServer
 class EngineTestCase(unittest.TestCase):
 
     def test__socket_machine_call(self):
-        """
-        Test socket call.
-        """
+        """ TestCase: MockTCPClient call """
         machine = SocketMachine(
             client=MockTCPClient(port=8888),
             server=MockTCPServer(port=8888)
