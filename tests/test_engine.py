@@ -1,7 +1,9 @@
 import random
 import unittest
 
-from tf.core.engine import HttpMachine, SocketMachine, Machine, Action, MachineState
+from tf import Action
+from tf.core.engine import HttpMachine, SocketMachine, Machine, MachineState, SocketClient
+from tf.mock.server import MockTCPServer
 
 
 class EngineTestCase(unittest.TestCase):
@@ -17,9 +19,14 @@ class EngineTestCase(unittest.TestCase):
         """
         Test the number of attachments into the socket machine.
         """
-        machine = SocketMachine()
+        machine = SocketMachine(
+            client=SocketClient(port=8888),
+            server=MockTCPServer(port=8888)
+        )
         attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
-        self.assertEqual(len(machine._actions), len(attachments))
+        print(machine._actions)
+        print(attachments)
+        self.assertEqual(len(machine._actions), len(attachments)+len(machine._collections))
 
     def test__http_machine_multiple_actions(self):
         """

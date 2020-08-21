@@ -1,6 +1,7 @@
 import unittest
 
-from tf.core.engine import SocketMachine, SocketClient
+from tf.core.engine import SocketMachine
+from tf.mock.server import MockTCPServer, SocketClient
 
 
 class EngineTestCase(unittest.TestCase):
@@ -9,7 +10,10 @@ class EngineTestCase(unittest.TestCase):
         """
         Test socket call.
         """
-        machine = SocketMachine(client=SocketClient(port=8888))
+        machine = SocketMachine(
+            client=SocketClient(port=8888),
+            server=MockTCPServer(port=8888)
+        )
         response = machine._client.call(**{
             "message": "hello python"
         })
