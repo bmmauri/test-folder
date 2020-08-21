@@ -1,5 +1,4 @@
 import random
-import time
 import unittest
 
 from tf import Action
@@ -26,7 +25,7 @@ class EngineTestCase(unittest.TestCase):
             server=MockTCPServer(port=8888)
         )
         attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
-        self.assertEqual(len(machine._actions), len(attachments)+len(machine._collections))
+        self.assertEqual(len(machine._actions), len(attachments) + len(machine._collections))
 
     def test__socket_machine_state_after_machine_started(self):
         """
