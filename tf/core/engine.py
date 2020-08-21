@@ -64,6 +64,11 @@ class Machine:
 class SocketMachine(Machine):
 
     def __init__(self, client: MockTCPClient, server: MockTCPServer):
+        """Argument to instance a Socket machine
+
+        :param client: client object
+        :param server: server object
+        """
         super().__init__()
         self._client = client
         self._server = server
