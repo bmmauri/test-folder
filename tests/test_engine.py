@@ -1,4 +1,5 @@
 import random
+import time
 import unittest
 
 from tf import Action
@@ -25,9 +26,51 @@ class EngineTestCase(unittest.TestCase):
             server=MockTCPServer(port=8888)
         )
         attachments = [machine.attach(Action()) for i in range(random.randint(2, 19))]
-        print(machine._actions)
-        print(attachments)
         self.assertEqual(len(machine._actions), len(attachments)+len(machine._collections))
+
+    def test__socket_machine_state_after_machine_started(self):
+        """
+        Test machine state after start server.
+            - MachineState.START
+        """
+        machine = SocketMachine(
+            client=MockTCPClient(port=8888),
+            server=MockTCPServer(port=8888)
+        )
+        self.assertIs(
+            machine.machine_state, MachineState.START,
+            f'Expected state {MachineState.START.name} got {machine.machine_state.name}'
+        )
+
+    def test__socket_machine_state_after_server_run(self):
+        """
+        Test machine state after start server.
+            - MachineState.RUN
+        """
+        machine = SocketMachine(
+            client=MockTCPClient(port=8888),
+            server=MockTCPServer(port=8888)
+        )
+        machine._server.fork_until(interval=2, detach=True)
+        self.assertIs(
+            machine.machine_state, MachineState.RUN,
+            f'Expected state {MachineState.RUN.name} got {machine.machine_state.name}'
+        )
+
+    def test__socket_machine_state_after_server_finished(self):
+        """
+        Test machine state after finish server.
+            - MachineState.FINISH
+        """
+        machine = SocketMachine(
+            client=MockTCPClient(port=8888),
+            server=MockTCPServer(port=8888)
+        )
+        machine._server.fork_until(interval=2, detach=False)
+        self.assertIs(
+            machine.machine_state, MachineState.FINISH,
+            f'Expected state {MachineState.FINISH.name} got {machine.machine_state.name}'
+        )
 
     def test__http_machine_multiple_actions(self):
         """

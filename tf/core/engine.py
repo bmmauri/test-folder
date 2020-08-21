@@ -69,6 +69,7 @@ class SocketMachine(Machine):
         self._collections.add(self._client)
         self._collections.add(self._server)
         self.__attach()
+        self.start()
 
     def __attach(self):
         for element in self._collections:

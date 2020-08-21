@@ -20,6 +20,9 @@ class Observer(metaclass=abc.ABCMeta):
     def update(self, arg):
         pass
 
+    def get_machine(self):
+        return self._machine
+
 
 class Action(Observer):
     """
