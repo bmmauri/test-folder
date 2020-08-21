@@ -1,4 +1,8 @@
+import socket
 import socketserver
+from typing import Union
+
+import tf
 import threading
 import time
 
@@ -20,11 +24,12 @@ class MockTCPServer(socketserver.TCPServer):
     """
     Simple TCP Mock server.
     """
+    _action = None
 
-    def __init__(self, host: str = 'localhost', port: int = 8888, handler=None):
+    def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketHandler):
         super().__init__((host, port), handler, bind_and_activate=False)
 
-    def run(self):
+    def __run(self):
         host, port = self.server_address
         print(f"TCPServer running at tcp://{host}:{port}")
         with self as server:
@@ -32,10 +37,30 @@ class MockTCPServer(socketserver.TCPServer):
             server.server_activate()
             server.serve_forever()
 
-    def fork_until(self, _method, interval: int = 5):
-        if not callable(_method):
-            raise SystemError("Need to be passed a callable method")
-        threading.Timer(interval=1, function=_method).start()
-        time.sleep(interval)
-        self.shutdown()
+    def fork_until(self, interval: int = 5, detach: bool = False):
+        run = threading.Thread(target=self.__run).start()
+        if not detach:
+            time.sleep(interval)
+            self.shutdown()
+        else:
+            shutdown = threading.Timer(interval=interval, function=self.shutdown).start()
 
+    def set_action(self, action):
+        self._action = action
+
+
+class SocketClient(socket.socket):
+    _action = None
+
+    def __init__(self, host: str = "localhost", port: int = 8888) -> None:
+        super().__init__()
+        self._ADDRESS = host, port
+
+    def call(self, message: Union[None, str] = None):
+        with self as sock:
+            sock.connect(self._ADDRESS)
+            sock.send(bytes(message, encoding='utf-8'))
+            return str(sock.recv(1024), encoding="utf-8")
+
+    def set_action(self, action):
+        self._action = action

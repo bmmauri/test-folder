@@ -2,11 +2,12 @@
 Engine module
     - Machine object
 """
-import abc
 import enum
-import socket
+import tf
 
 from typing import Union
+
+from tf.mock.server import MockTCPServer, SocketClient
 
 
 class MachineState(enum.Enum):
@@ -59,51 +60,29 @@ class Machine:
         self._notify()
 
 
-class SocketClient(socket.socket):
-
-    def __init__(self, host: str = "localhost", port: int = 8888) -> None:
-        super().__init__()
-        self._ADDRESS = host, port
-
-    def call(self, message: Union[None, str] = None):
-        with self as sock:
-            sock.connect(self._ADDRESS)
-            sock.send(bytes(message, encoding='utf-8'))
-            return str(sock.recv(1024), encoding="utf-8")
-
-
 class SocketMachine(Machine):
 
-    def __init__(self, client: SocketClient):
+    def __init__(self, client: SocketClient, server: MockTCPServer):
         super().__init__()
         self._client = client
+        self._server = server
         self._collections.add(self._client)
+        self._collections.add(self._server)
+        self.load_actions()
+        self.__attach()
+
+    def __attach(self):
+        for element in self._collections:
+            if hasattr(element, '_action'):
+                super().attach(getattr(element, '_action'))
+
+    def load_actions(self):
+        for element in self._collections:
+            if hasattr(element, '_action'):
+                element.set_action(tf.Action())
 
 
 class HttpMachine(Machine):
 
     def __init__(self):
         super().__init__()
-
-
-class Observer(metaclass=abc.ABCMeta):
-    """
-    Observer object
-    """
-
-    def __init__(self):
-        self._machine = None
-        self._action_state = None
-
-    @abc.abstractmethod
-    def update(self, arg):
-        pass
-
-
-class Action(Observer):
-    """
-    Action object
-    """
-
-    def update(self, arg):
-        self._action_state = arg
