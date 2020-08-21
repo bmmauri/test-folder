@@ -5,8 +5,7 @@ import time
 
 
 class MockSocketHandler(socketserver.BaseRequestHandler):
-    """
-    Simple handler for Mock server.
+    """ Simple handler for Mock server.
     TODO:
         - could be customizable?
     """
@@ -24,6 +23,12 @@ class MockTCPServer(socketserver.TCPServer):
     _action = None
 
     def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketHandler):
+        """ Socket server easy object (Mock).
+
+        :param host: hostname to expose
+        :param port: port to expose
+        :param handler: Handler object that handle response for each client call
+        """
         self._action = tf.Action()
         super().__init__((host, port), handler, bind_and_activate=False)
 
