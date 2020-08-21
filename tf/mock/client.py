@@ -8,7 +8,7 @@ class MockTCPClient(socket.socket):
     _action = None
 
     def __init__(self, host: str = "localhost", port: int = 8888) -> None:
-        """ Argument needed to connect to server.
+        """Argument needed to connect to server.
 
         :param host: hostname of the server
         :param port: port of the server

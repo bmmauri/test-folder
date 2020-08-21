@@ -8,10 +8,10 @@ import tf.core.engine as engine
 
 
 class Observer(metaclass=abc.ABCMeta):
-    """ Observer object """
+    """Observer object."""
 
     def __init__(self) -> None:
-        """ Metaclass object that expose the machine and the action state of the concrete object """
+        """Metaclass object that expose the machine and the action state of the concrete object."""
         self._machine: Union[engine.Machine, None] = None
         self._action_state = None
 
@@ -24,7 +24,7 @@ class Observer(metaclass=abc.ABCMeta):
 
 
 class Action(Observer):
-    """ Action concrete observer object """
+    """Action concrete observer object."""
 
     def update(self, arg):
         self._action_state = arg
