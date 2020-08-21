@@ -5,7 +5,8 @@ import time
 
 
 class MockSocketHandler(socketserver.BaseRequestHandler):
-    """Simple handler for Mock server.
+    """
+    Simple handler for Mock server.
     TODO:
         - could be customizable?
     """
@@ -17,7 +18,9 @@ class MockSocketHandler(socketserver.BaseRequestHandler):
 
 
 class MockTCPServer(socketserver.TCPServer):
-    """Simple TCP Mock server."""
+    """
+    Simple TCP Mock server.
+    """
     _action = None
 
     def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketHandler):
