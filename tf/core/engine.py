@@ -3,11 +3,11 @@ Engine module
     - Machine object
 """
 import enum
-import tf
 
 from typing import Union
 
-from tf.mock.server import MockTCPServer, SocketClient
+from tf.mock.client import MockTCPClient
+from tf.mock.server import MockTCPServer
 
 
 class MachineState(enum.Enum):
@@ -62,24 +62,18 @@ class Machine:
 
 class SocketMachine(Machine):
 
-    def __init__(self, client: SocketClient, server: MockTCPServer):
+    def __init__(self, client: MockTCPClient, server: MockTCPServer):
         super().__init__()
         self._client = client
         self._server = server
         self._collections.add(self._client)
         self._collections.add(self._server)
-        self.load_actions()
         self.__attach()
 
     def __attach(self):
         for element in self._collections:
             if hasattr(element, '_action'):
                 super().attach(getattr(element, '_action'))
-
-    def load_actions(self):
-        for element in self._collections:
-            if hasattr(element, '_action'):
-                element.set_action(tf.Action())
 
 
 class HttpMachine(Machine):
