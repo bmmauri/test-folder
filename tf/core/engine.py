@@ -77,6 +77,14 @@ class SocketMachine(Machine):
         self.__attach()
         self.start()
 
+    @property
+    def client(self):
+        return self._client
+
+    @property
+    def server(self):
+        return self._server
+
     def __attach(self):
         for element in self._collections:
             if hasattr(element, '_action'):
