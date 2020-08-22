@@ -7,7 +7,6 @@
 
 
 
-
 Test Automation framework based on Python
 
 Enjoy! Developped with love by @me
