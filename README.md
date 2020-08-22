@@ -1,4 +1,4 @@
-# test-folder [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)][![GitHub license](https://img.shields.io/github/license/bmmauri/test-folder.svg)](https://github.com/bmmauri/test-folder/blob/master/LICENSE) [![GitHub tag](https://img.shields.io/github/tag/bmmauri/test-folder.svg)](https://GitHub.com/bmmauri/test-folder/tags/) [![Github all releases](https://img.shields.io/github/downloads/bmmauri/test-folder/total.svg)](https://GitHub.com/bmmauri/test-folder/releases/)
+# test-folder [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)] [![GitHub license](https://img.shields.io/github/license/bmmauri/test-folder.svg)](https://github.com/bmmauri/test-folder/blob/master/LICENSE) [![GitHub tag](https://img.shields.io/github/tag/bmmauri/test-folder.svg)](https://GitHub.com/bmmauri/test-folder/tags/) [![Github all releases](https://img.shields.io/github/downloads/bmmauri/test-folder/total.svg)](https://GitHub.com/bmmauri/test-folder/releases/)
 
 
 
