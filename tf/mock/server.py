@@ -1,3 +1,4 @@
+import pickle
 import socketserver
 import tf
 import threading
@@ -15,6 +16,17 @@ class MockSocketHandler(socketserver.BaseRequestHandler):
         self.data = self.request.recv(1024).strip()
         print(self.data)
         self.request.sendall(self.data.upper())
+
+
+class MockSocketStateHandler(socketserver.BaseRequestHandler):
+    """
+    Simple states handler for Mock server.
+    """
+
+    def handle(self) -> None:
+        self.data = pickle.loads(self.request.recv(1024))
+        print(str(self.data))
+        self.request.sendall(bytes(str(self.data), encoding='utf-8'))
 
 
 class MockTCPServer(socketserver.TCPServer):

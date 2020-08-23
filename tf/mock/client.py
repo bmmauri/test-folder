@@ -17,8 +17,11 @@ class MockTCPClient(socket.socket):
         super().__init__()
         self._ADDRESS = host, port
 
-    def call(self, message: Union[None, str] = None):
+    def call(self, message: Union[None, str, bytes] = None):
         with self as sock:
             sock.connect(self._ADDRESS)
-            sock.send(bytes(message, encoding='utf-8'))
+            if type(message) is bytes:
+                sock.send(message)
+            else:
+                sock.send(bytes(message, encoding='utf-8'))
             return str(sock.recv(1024), encoding="utf-8")
