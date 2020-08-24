@@ -128,6 +128,22 @@ class EngineMachineStateTestCase(unittest.TestCase):
         machine.finish()
         self.assertEqual(machine._machine_state, MachineState.FINISH)
 
+    def test__machine_init(self):
+        """
+        Test the state of the machine: MachineState.INIT.
+        """
+        machine = Machine()
+        machine.init()
+        self.assertEqual(machine._machine_state, MachineState.INIT)
+
+    def test__machine_complete(self):
+        """
+        Test the state of the machine: MachineState.FINISH.
+        """
+        machine = Machine()
+        machine.complete()
+        self.assertEqual(machine._machine_state, MachineState.COMPLETE)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -12,11 +12,13 @@ from tf.mock.server import MockTCPServer
 
 class MachineState(enum.Enum):
     ABORT = 0
-    START = 1
-    RUN = 2
-    PAUSE = 3
-    BLOCK = 4
-    FINISH = 5
+    INIT = 1
+    START = 2
+    RUN = 3
+    PAUSE = 4
+    BLOCK = 5
+    FINISH = 6
+    COMPLETE = 7
 
 
 class Machine:
@@ -26,6 +28,7 @@ class Machine:
         self._collections: set = set()
         self._actions: set = set()
         self._machine_state: Union[None, int] = None
+        self.init()
 
     def attach(self, action):
         action._machine = self
@@ -41,6 +44,8 @@ class Machine:
 
     def abort(self): self.machine_state = MachineState.ABORT
 
+    def init(self): self.machine_state = MachineState.INIT
+
     def start(self): self.machine_state = MachineState.START
 
     def run(self): self.machine_state = MachineState.RUN
@@ -50,6 +55,8 @@ class Machine:
     def block(self): self.machine_state = MachineState.BLOCK
 
     def finish(self): self.machine_state = MachineState.FINISH
+
+    def complete(self): self.machine_state = MachineState.COMPLETE
 
     @property
     def machine_state(self):
@@ -75,7 +82,6 @@ class SocketMachine(Machine):
         self._collections.add(self._client)
         self._collections.add(self._server)
         self.__attach()
-        self.start()
 
     @property
     def client(self):
@@ -89,6 +95,7 @@ class SocketMachine(Machine):
         for element in self._collections:
             if hasattr(element, '_action'):
                 super().attach(getattr(element, '_action'))
+        self.start()
 
 
 class HttpMachine(Machine):
