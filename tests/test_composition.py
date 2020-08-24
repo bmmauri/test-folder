@@ -15,7 +15,7 @@ class ComposeTestCase(unittest.TestCase):
         tf_compose = TestFolderCompose()
         tf_compose.instance.setup(
             machine=SocketMachine(client=MockTCPClient(), server=MockTCPServer()),
-            execution=TestFolderExecution(context={})
+            execution=TestFolderExecution(context={"message": "Hi! I am TestAutomation."})
         )
         self.assertTrue(
             tf_compose.instance.machine is not None and tf_compose.instance.execution is not None,
@@ -31,6 +31,7 @@ class ComposeTestCase(unittest.TestCase):
         )
         tf_compose.instance.machine.server.fork_until(detach=True)
         tf_compose.instance.execution.execute()
+        tf_compose.instance.machine.server._wait_until_close()
         self.assertIsNotNone(tf_compose.instance.execution.extract(), "Extraction failure")
 
     def test__execution_start(self):

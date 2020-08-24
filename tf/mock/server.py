@@ -58,6 +58,11 @@ class MockTCPServer(socketserver.TCPServer):
         self._action.get_machine().finish()
         self.shutdown()
 
+    def _wait_until_close(self):
+        while not self.socket._closed:
+            time.sleep(0.5)
+            continue
+
     def fork_until(self, interval: int = 5, detach: bool = False):
         threading.Thread(target=self.__run).start()
         machine = self._action.get_machine()
