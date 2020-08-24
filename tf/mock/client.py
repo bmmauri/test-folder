@@ -1,3 +1,4 @@
+import logging
 import socket
 import tf
 
@@ -17,9 +18,18 @@ class MockTCPClient(socket.socket):
         super().__init__()
         self._ADDRESS = host, port
 
+    def _quit(self):
+        self._action.get_machine().abort()
+        self._action.get_machine().detach(self._action)
+
     def call(self, message: Union[None, str, bytes] = None):
         with self as sock:
-            sock.connect(self._ADDRESS)
+            try:
+                sock.connect(self._ADDRESS)
+            except Exception as e:
+                logging.exception(e)
+                self._quit()
+                raise e
             if type(message) is bytes:
                 sock.send(message)
             else:

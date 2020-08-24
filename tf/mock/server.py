@@ -42,6 +42,7 @@ class MockTCPServer(socketserver.TCPServer):
         :param port: port to expose
         :param handler: Handler object that handle response for each client call
         """
+        socketserver.TCPServer.allow_reuse_address = True
         self._action = tf.Action()
         super().__init__((host, port), handler, bind_and_activate=False)
 
@@ -53,7 +54,7 @@ class MockTCPServer(socketserver.TCPServer):
             server.server_activate()
             server.serve_forever()
 
-    def __close(self):
+    def __finish(self):
         self._action.get_machine().finish()
         self.shutdown()
 
@@ -64,6 +65,6 @@ class MockTCPServer(socketserver.TCPServer):
             machine.run()
         if not detach:
             time.sleep(interval)
-            self.__close()
+            self.__finish()
         else:
-            threading.Timer(interval=interval, function=self.__close).start()
+            threading.Timer(interval=interval, function=self.__finish).start()

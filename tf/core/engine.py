@@ -19,6 +19,7 @@ class MachineState(enum.Enum):
     BLOCK = 5
     FINISH = 6
     COMPLETE = 7
+    CLOSE = 8
 
 
 class Machine:
@@ -58,6 +59,8 @@ class Machine:
 
     def complete(self): self.machine_state = MachineState.COMPLETE
 
+    def close(self): self.machine_state = MachineState.CLOSE
+
     @property
     def machine_state(self):
         return self._machine_state
@@ -90,6 +93,10 @@ class SocketMachine(Machine):
     @property
     def server(self):
         return self._server
+
+    def close(self):
+        self.server.shutdown()
+        super().close()
 
     def __attach(self):
         for element in self._collections:
