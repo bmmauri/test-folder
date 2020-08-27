@@ -3,11 +3,14 @@ Engine module
     - Machine object
 """
 import enum
+import logging
 
 from typing import Union
 
 from tf.mock.client import MockTCPClient
 from tf.mock.server import MockTCPServer
+
+logger = logging.getLogger()
 
 
 class MachineState(enum.Enum):
@@ -43,7 +46,9 @@ class Machine:
         for action in self._actions:
             action.update(self._machine_state)
 
-    def abort(self): self.machine_state = MachineState.ABORT
+    def abort(self):
+        logger.error("Please checked out the machine")
+        self.machine_state = MachineState.ABORT
 
     def init(self): self.machine_state = MachineState.INIT
 

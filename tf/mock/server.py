@@ -1,8 +1,12 @@
+import logging
 import pickle
 import socketserver
 import tf
+import tf.core.engine as engine
 import threading
 import time
+
+logger = logging.getLogger("TestFolder")
 
 
 class MockSocketHandler(socketserver.BaseRequestHandler):
@@ -14,7 +18,6 @@ class MockSocketHandler(socketserver.BaseRequestHandler):
 
     def handle(self) -> None:
         self.data = self.request.recv(1024).strip()
-        print(self.data)
         self.request.sendall(self.data.upper())
 
 
@@ -23,10 +26,22 @@ class MockSocketStateHandler(socketserver.BaseRequestHandler):
     Simple states handler for Mock server.
     """
 
+    def _transition(self):
+        machine = self.server._action.get_machine()
+        machine_operation = getattr(machine, self.data.__class__.__name__.lower())
+        if callable(machine_operation):
+            machine_operation()
+        else:
+            raise AttributeError(
+                "Please provide an existing operation."
+            )
+
     def handle(self) -> None:
         self.data = pickle.loads(self.request.recv(1024))
-        print(str(self.data))
-        self.request.sendall(bytes(str(self.data), encoding='utf-8'))
+        self._transition()
+        self.request.sendall(
+            bytes(str('Transition ..'), encoding='utf-8')
+        )
 
 
 class MockTCPServer(socketserver.TCPServer):
@@ -48,13 +63,24 @@ class MockTCPServer(socketserver.TCPServer):
 
     def __run(self):
         host, port = self.server_address
-        print(f"TCPServer running at tcp://{host}:{port}")
+        logger.debug(f"TCPServer running at tcp://{host}:{port}")
         with self as server:
             server.server_bind()
             server.server_activate()
             server.serve_forever()
 
     def __finish(self):
+        logger.debug("Server is finishing..")
+        counter = 20
+        while self._action.get_machine().machine_state == engine.MachineState.PAUSE:
+            if counter == 0:
+                logger.warning(f"Machine forced to finish")
+                break
+            logger.warning(f"MachineState: {engine.MachineState.PAUSE.name} need to be terminated")
+            time.sleep(0.5)
+            counter -= 1
+            continue
+
         self._action.get_machine().finish()
         self.shutdown()
 

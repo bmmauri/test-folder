@@ -18,35 +18,24 @@ class Start(Command):
         super().__init__(command=command)
 
     def __str__(self):
-        return "START" if self.get_command() is None else f"START - {self.get_command()}"
-
-
-class Stop(Command):
-    """Start command object"""
-
-    def __init__(self, command: str = None) -> None:
-        super().__init__(command=command)
-
-    def __str__(self):
-        return "STOP" if self.get_command() is None else f"STOP - {self.get_command()}"
+        return "START"
 
 
 class Pause(Command):
-    """Start command object"""
+    """Pause command object"""
 
     def __init__(self, command: str = None) -> None:
         super().__init__(command=command)
 
     def __str__(self):
-        return "PAUSE" if self.get_command() is None else f"PAUSE - {self.get_command()}"
+        return "PAUSE"
 
 
 class Abort(Command):
-    """Start command object"""
+    """Abort command object"""
 
     def __init__(self, command: str = None) -> None:
         super().__init__(command=command)
 
     def __str__(self):
-        return "ABORT" if self.get_command() is None else f"ABORT - {self.get_command()}"
-
+        return "ABORT"
