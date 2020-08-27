@@ -7,10 +7,15 @@ import logging
 
 from typing import Union
 
+from tf import utils
 from tf.mock.client import MockTCPClient
 from tf.mock.server import MockTCPServer
 
 logger = logging.getLogger()
+handler = logging.FileHandler(filename=f"{logger.name}.log", mode="w")
+handler.setFormatter(utils.Formatter())
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 
 class MachineState(enum.Enum):
@@ -31,7 +36,7 @@ class Machine:
         """Machine base object."""
         self._collections: set = set()
         self._actions: set = set()
-        self._machine_state: Union[None, int] = None
+        self._machine_state: Union[None, MachineState] = None
         self.init()
 
     def attach(self, action):
@@ -43,6 +48,7 @@ class Machine:
         self._actions.discard(action)
 
     def _notify(self):
+        logger.debug(f'Notice machine state: {self.machine_state.name}')
         for action in self._actions:
             action.update(self._machine_state)
 
@@ -58,7 +64,9 @@ class Machine:
 
     def pause(self): self.machine_state = MachineState.PAUSE
 
-    def block(self): self.machine_state = MachineState.BLOCK
+    def block(self):
+        logger.error("Please checked out the machine")
+        self.machine_state = MachineState.BLOCK
 
     def finish(self): self.machine_state = MachineState.FINISH
 

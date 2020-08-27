@@ -2,9 +2,14 @@ import logging
 import socket
 import tf
 
+from tf import utils
 from typing import Union
 
 logger = logging.getLogger()
+handler = logging.FileHandler(filename=f"{logger.name}.log", mode="w")
+handler.setFormatter(utils.Formatter())
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 
 class MockTCPClient(socket.socket):
@@ -23,7 +28,8 @@ class MockTCPClient(socket.socket):
     def _quit(self):
         self._action.get_machine().detach(self._action)
 
-    def call(self, message: Union[None, str, bytes] = None):
+    def call(self, uid=None, headers=None, message=None):
+        logger.debug(uid)
         response = None
         with self as sock:
             try:

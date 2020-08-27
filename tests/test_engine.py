@@ -1,12 +1,35 @@
+import logging
 import unittest
 
 from tf import Action
+from tf import utils
 from tf.core.engine import HttpMachine, SocketMachine, Machine, MachineState
 from tf.mock.client import MockTCPClient
 from tf.mock.server import MockTCPServer
 
+logger = logging.getLogger()
+handler = logging.FileHandler(filename=f"{logger.name}.log", mode="w")
+handler.setFormatter(utils.Formatter())
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+
 
 class EngineTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        logger.info(f"{'##' * 20}\n START TESTSUITE: {cls.__name__}\n{'##' * 20}")
+
+    def setUp(self) -> None:
+        super().setUp()
+        logger.info(f"RUNNING: {self.__class__.__name__}: '{self._testMethodName}' method")
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        logger.info(f"{'##' * 20}\n END TESTSUITE: {cls.__name__}\n{'##' * 20}")
+
     def test__machine_multiple_actions(self):
         """
         Test the number of attachments into the machine.
@@ -80,6 +103,21 @@ class EngineTestCase(unittest.TestCase):
 
 
 class EngineMachineStateTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        logger.info(f"{'##' * 20}\n START TESTSUITE: {cls.__name__}\n{'##' * 20}")
+
+    def setUp(self) -> None:
+        super().setUp()
+        logger.info(f"RUNNING: {self.__class__.__name__}: '{self._testMethodName}' method")
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        logger.info(f"{'##' * 20}\n END TESTSUITE: {cls.__name__}\n{'##' * 20}")
+
     def test__machine_abort(self):
         """
         Test the state of the machine: MachineState.ABORT.
