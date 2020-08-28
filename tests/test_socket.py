@@ -45,8 +45,9 @@ class SocketTestCase(unittest.TestCase):
             "message": "hello python"
         })
         logging.info(response)
+        machine.server._wait_until_close()
         self.assertIsNotNone(response, msg="Message received should not be empty")
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(testRunner=test_runner)
