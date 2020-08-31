@@ -61,7 +61,7 @@ class MockTCPServer(socketserver.TCPServer):
         self._action = tf.Action()
         super().__init__((host, port), handler, bind_and_activate=False)
 
-    def __run(self):
+    def _run(self):
         host, port = self.server_address
         logger.debug(f"TCPServer running at tcp://{host}:{port}")
         with self as server:
@@ -69,7 +69,7 @@ class MockTCPServer(socketserver.TCPServer):
             server.server_activate()
             server.serve_forever()
 
-    def __finish(self):
+    def _finish(self):
         logger.debug("Server is finishing..")
         counter = 20
         while self._action.get_machine().machine_state == engine.MachineState.PAUSE:
@@ -90,12 +90,12 @@ class MockTCPServer(socketserver.TCPServer):
             continue
 
     def fork_until(self, interval: int = 5, detach: bool = False):
-        threading.Thread(target=self.__run).start()
+        threading.Thread(target=self._run).start()
         machine = self._action.get_machine()
         if machine:
             machine.run()
         if not detach:
             time.sleep(interval)
-            self.__finish()
+            self._finish()
         else:
-            threading.Timer(interval=interval, function=self.__finish).start()
+            threading.Timer(interval=interval, function=self._finish).start()
