@@ -99,3 +99,21 @@ class MockTCPServer(socketserver.TCPServer):
             self._finish()
         else:
             threading.Timer(interval=interval, function=self._finish).start()
+
+
+class RoboticMockTCPServer(MockTCPServer):
+    """Robotic server (Mock)."""
+
+    def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketStateHandler):
+        super().__init__(host, port, handler)
+
+    def init(self):
+        self._calibrate()
+        self._action.get_machine().ready()
+
+    def _calibrate(self):
+        self._action.get_machine().not_ready()
+        self.do()
+
+    def do(self):
+        logger.debug('do something with serial')

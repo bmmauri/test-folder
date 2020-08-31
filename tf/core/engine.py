@@ -9,7 +9,7 @@ from typing import Union
 
 from tf import utils
 from tf.mock.client import MockTCPClient
-from tf.mock.server import MockTCPServer
+from tf.mock.server import MockTCPServer, MockSocketStateHandler, RoboticMockTCPServer
 
 logger = logging.getLogger()
 handler = logging.FileHandler(filename=f"{logger.name}.log", mode="w")
@@ -21,13 +21,15 @@ logger.addHandler(handler)
 class MachineState(enum.Enum):
     ABORT = 0
     INIT = 1
-    START = 2
-    RUN = 3
-    PAUSE = 4
-    BLOCK = 5
-    FINISH = 6
-    COMPLETE = 7
-    CLOSE = 8
+    READY = 2
+    NOT_READY = 3
+    START = 4
+    RUN = 5
+    PAUSE = 6
+    BLOCK = 7
+    FINISH = 8
+    COMPLETE = 9
+    CLOSE = 10
 
 
 class Machine:
@@ -38,6 +40,7 @@ class Machine:
         self._actions: set = set()
         self._machine_state: Union[None, MachineState] = None
         self.init()
+        self.ready()
 
     def attach(self, action):
         action._machine = self
@@ -57,6 +60,10 @@ class Machine:
         self.machine_state = MachineState.ABORT
 
     def init(self): self.machine_state = MachineState.INIT
+
+    def ready(self): self.machine_state = MachineState.READY
+
+    def not_ready(self): self.machine_state = MachineState.NOT_READY
 
     def start(self): self.machine_state = MachineState.START
 
@@ -116,6 +123,40 @@ class SocketMachine(Machine):
             if hasattr(element, '_action'):
                 super().attach(getattr(element, '_action'))
         self.start()
+
+
+class RoboticMachine(Machine):
+
+    def __init__(self, client: MockTCPClient):
+        """Argument to instance a Socket machine
+
+        :param client: client object
+        """
+        super().__init__()
+        self._client = client
+        self._server = RoboticMockTCPServer()
+        self._collections.add(self._client)
+        self._collections.add(self._server)
+        self.__attach()
+        self._server.init()
+
+    @property
+    def client(self):
+        return self._client
+
+    @property
+    def server(self):
+        return self._server
+
+    def close_(self):
+        self.server.shutdown()
+        super().close()
+
+    def __attach(self):
+        for element in self._collections:
+            if hasattr(element, '_action'):
+                super().attach(getattr(element, '_action'))
+        self.ready()
 
 
 class HttpMachine(Machine):
