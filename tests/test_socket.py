@@ -50,4 +50,4 @@ class SocketTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(testRunner=test_runner)
+    unittest.main()
