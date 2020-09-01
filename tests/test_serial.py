@@ -38,10 +38,15 @@ class RoboticMachineTestCase(unittest.TestCase):
             machine=RoboticMachine(client=MockTCPClient()),
             execution=TestFolderExecution(
                 context={
-                    "message": pickle.dumps(Start())
+                    "message": pickle.dumps(Start(
+                        command="s0 60"
+                    ))
                 }
             )
         )
+        tf_compose.instance.machine.server.fork_until(detach=True)
+        tf_compose.instance.execution.execute()
+        breakpoint()
         self.assertTrue(False, msg="Message received should not be empty")
 
 

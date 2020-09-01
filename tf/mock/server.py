@@ -1,5 +1,6 @@
 import logging
 import pickle
+import serial
 import socketserver
 import tf
 import tf.core.engine as engine
@@ -104,8 +105,15 @@ class MockTCPServer(socketserver.TCPServer):
 class RoboticMockTCPServer(MockTCPServer):
     """Robotic server (Mock)."""
 
+    __servos_position = {
+        "s1": 0, "s2": 0, "s3": 0,
+        "s4": 0, "s5": 0, "s6": 0
+    }
+    __board: serial.Serial = None
+
     def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketStateHandler):
         super().__init__(host, port, handler)
+        self.__board = serial.Serial()
 
     def init(self):
         self._calibrate()
@@ -117,3 +125,8 @@ class RoboticMockTCPServer(MockTCPServer):
 
     def do(self):
         logger.debug('do something with serial')
+        for servo, position in self.__servos_position.items():
+            serial_message = f"{servo} {position}"
+            self.__board.write(bytes(serial_message, encoding='utf-8'))
+
+
