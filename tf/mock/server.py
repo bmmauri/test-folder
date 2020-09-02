@@ -1,5 +1,9 @@
+import json
 import logging
+import msgpack
+import os
 import pickle
+import pty
 import serial
 import socketserver
 import tf
@@ -30,6 +34,7 @@ class MockSocketStateHandler(socketserver.BaseRequestHandler):
     def _transition(self):
         machine = self.server._action.get_machine()
         machine_operation = getattr(machine, self.data.__class__.__name__.lower())
+        machine.server.set_data(self.data)
         if callable(machine_operation):
             machine_operation()
         else:
@@ -109,11 +114,32 @@ class RoboticMockTCPServer(MockTCPServer):
         "s1": 0, "s2": 0, "s3": 0,
         "s4": 0, "s5": 0, "s6": 0
     }
+    __master_fd, __slave_fd = None, None
+    __serial_device_name = None
     __board: serial.Serial = None
+    __data = None
 
     def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketStateHandler):
         super().__init__(host, port, handler)
-        self.__board = serial.Serial()
+        self.__virtual_serial_device()
+
+    def __virtual_serial_device(self):
+        self.__master_fd, self.__slave_fd = pty.openpty()
+        self.__serial_device_name = os.ttyname(self.__slave_fd)
+        self.__board = serial.Serial(port=self.__serial_device_name)
+        logger.debug(f"Virtual Serial Device '{self.__serial_device_name}' is open")
+
+    def get_servos_position(self): return self.__servos_position
+
+    def set_data(self, _data):
+        self.__data = _data
+
+    def get_data(self):
+        return self.__data
+
+    def update(self, positions: dict = None):
+        positions = positions if positions is not None else {}
+        self.__servos_position.update(positions)
 
     def init(self):
         self._calibrate()
@@ -124,9 +150,10 @@ class RoboticMockTCPServer(MockTCPServer):
         self.do()
 
     def do(self):
-        logger.debug('do something with serial')
-        for servo, position in self.__servos_position.items():
-            serial_message = f"{servo} {position}"
-            self.__board.write(bytes(serial_message, encoding='utf-8'))
-
-
+        logger.warning('Robot is working')
+        if not self.__board:
+            raise SystemError("There is no board available")
+        byte_message = msgpack.packb(self.__servos_position, use_bin_type=True)
+        logger.warning("Update servos position")
+        logger.info(json.dumps(self.__servos_position, indent=2))
+        self.__board.write(byte_message)

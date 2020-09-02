@@ -1,4 +1,7 @@
+import json
 import logging
+import msgpack
+import os
 import pickle
 import unittest
 
@@ -39,15 +42,18 @@ class RoboticMachineTestCase(unittest.TestCase):
             execution=TestFolderExecution(
                 context={
                     "message": pickle.dumps(Start(
-                        command="s0 60"
+                        command=json.dumps(
+                            {"s0": 60}
+                        )
                     ))
                 }
             )
         )
-        tf_compose.instance.machine.server.fork_until(detach=True)
+        tf_compose.instance.machine.server.fork_until(interval=5, detach=True)
         tf_compose.instance.execution.execute()
-        breakpoint()
-        self.assertTrue(False, msg="Message received should not be empty")
+        response = msgpack.unpackb(os.read(tf_compose.instance.machine.server._RoboticMockTCPServer__master_fd, 3000))
+        tf_compose.instance.machine.server._wait_until_close()
+        self.assertIsNotNone(response, msg="Message received should not be empty")
 
 
 if __name__ == '__main__':

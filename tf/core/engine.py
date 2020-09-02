@@ -3,6 +3,7 @@ Engine module
     - Machine object
 """
 import enum
+import json
 import logging
 
 from typing import Union
@@ -148,7 +149,7 @@ class RoboticMachine(Machine):
     def server(self):
         return self._server
 
-    def close_(self):
+    def close(self):
         self.server.shutdown()
         super().close()
 
@@ -157,6 +158,14 @@ class RoboticMachine(Machine):
             if hasattr(element, '_action'):
                 super().attach(getattr(element, '_action'))
         self.ready()
+
+    def __parse_current_command(self):
+        return json.loads(self._server.get_data().get_command())
+
+    def start(self):
+        super().start()
+        content = self.__parse_current_command()
+        self._server.update(content)
 
 
 class HttpMachine(Machine):
