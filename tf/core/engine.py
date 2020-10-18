@@ -127,6 +127,11 @@ class SocketMachine(Machine):
 
 
 class RoboticMachine(Machine):
+    debug: bool = False
+
+    __microprocessor = {
+        "ip": "192.168.4.2", "port": 80, "uri": "/servo/"
+    }
 
     def __init__(self, client: MockTCPClient):
         """Argument to instance a Socket machine
@@ -149,6 +154,10 @@ class RoboticMachine(Machine):
     def server(self):
         return self._server
 
+    @property
+    def microprocessor(self):
+        return self.__microprocessor
+
     def close(self):
         self.server.shutdown()
         super().close()
@@ -157,15 +166,18 @@ class RoboticMachine(Machine):
         for element in self._collections:
             if hasattr(element, '_action'):
                 super().attach(getattr(element, '_action'))
-        self.ready()
 
     def __parse_current_command(self):
         return json.loads(self._server.get_data().get_command())
 
-    def start(self):
-        super().start()
+    def run(self):
+        super().run()
         content = self.__parse_current_command()
         self._server.update(content)
+        logger.warning('Writing on robot..')
+        logger.info(json.dumps(self._server.get_servos_position(), indent=2))
+        if not self.debug:
+            self._server.do()
 
 
 class HttpMachine(Machine):

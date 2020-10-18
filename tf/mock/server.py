@@ -4,6 +4,7 @@ import msgpack
 import os
 import pickle
 import pty
+import requests
 import serial
 import socketserver
 import tf
@@ -99,7 +100,7 @@ class MockTCPServer(socketserver.TCPServer):
         threading.Thread(target=self._run).start()
         machine = self._action.get_machine()
         if machine:
-            machine.run()
+            machine.start()
         if not detach:
             time.sleep(interval)
             self._finish()
@@ -111,25 +112,17 @@ class RoboticMockTCPServer(MockTCPServer):
     """Robotic server (Mock)."""
 
     __servos_position = {
-        "s1": 0, "s2": 0, "s3": 0,
-        "s4": 0, "s5": 0, "s6": 0
+        "s0": 130, "s1": None,
+        "s2": None, "s3": None,
+        "s4": None, "s5": None, "s6": None
     }
-    __master_fd, __slave_fd = None, None
-    __serial_device_name = None
-    __board: serial.Serial = None
     __data = None
 
     def __init__(self, host: str = 'localhost', port: int = 8888, handler=MockSocketStateHandler):
         super().__init__(host, port, handler)
-        self.__virtual_serial_device()
 
-    def __virtual_serial_device(self):
-        self.__master_fd, self.__slave_fd = pty.openpty()
-        self.__serial_device_name = os.ttyname(self.__slave_fd)
-        self.__board = serial.Serial(port=self.__serial_device_name)
-        logger.debug(f"Virtual Serial Device '{self.__serial_device_name}' is open")
-
-    def get_servos_position(self): return self.__servos_position
+    def get_servos_position(self):
+        return self.__servos_position
 
     def set_data(self, _data):
         self.__data = _data
@@ -148,12 +141,20 @@ class RoboticMockTCPServer(MockTCPServer):
     def _calibrate(self):
         self._action.get_machine().not_ready()
         self.do()
+        time.sleep(5)
 
     def do(self):
-        logger.warning('Robot is working')
-        if not self.__board:
-            raise SystemError("There is no board available")
-        byte_message = msgpack.packb(self.__servos_position, use_bin_type=True)
+        logger.warning('Robot engagement')
+        msgpack.packb(self.__servos_position, use_bin_type=True)
+        microprocessor = self._action.get_machine().microprocessor
+        base_url = f"http://" \
+                   f"{microprocessor.get('ip', None)}" \
+                   f":{microprocessor.get('port', None)}" \
+                   f"{microprocessor.get('uri', None)}"
+        for servo, pos in self.__servos_position.items():
+            if pos is not None:
+                endpoint = f"{base_url}{servo}/{pos}"
+                requests.get(endpoint)
+                time.sleep(1)
         logger.warning("Update servos position")
-        logger.info(json.dumps(self.__servos_position, indent=2))
-        self.__board.write(byte_message)
+        logger.warning(self.__servos_position)

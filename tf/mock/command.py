@@ -21,6 +21,16 @@ class Start(Command):
         return "START"
 
 
+class Run(Command):
+    """Run command object"""
+
+    def __init__(self, command: str = None) -> None:
+        super().__init__(command=command)
+
+    def __str__(self):
+        return "RUN"
+
+
 class Pause(Command):
     """Pause command object"""
 

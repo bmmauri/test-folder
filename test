@@ -7,6 +7,6 @@ python -m pytest --disable-pytest-warnings --html=reports/test_composition.html 
 sleep 10
 python -m pytest --disable-pytest-warnings --html=reports/test_socket.html tests/test_socket.py::SocketTestCase --cache-clear
 sleep 5
-python -m pytest --disable-pytest-warnings --html=reports/test_serial.html tests/test_serial.py::RoboticMachineTestCase --cache-clear
+python -m pytest --disable-pytest-warnings --html=reports/test_serial.html tests/test_robot.py::RoboticMachineTestCase --cache-clear
 sleep 5
 echo "---- COMPLETED TEST ------"
